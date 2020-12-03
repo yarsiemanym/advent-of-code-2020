@@ -18,8 +18,8 @@ let buildTuples entries =
         for i in 0 .. Seq.length (entries) - 1 do
             for j in 0 .. Seq.length (entries) - 1 do
                 for k in 0 .. Seq.length (entries) - 1 do
-                    if i <> j && j <> k && i <> k
-                    then yield (Seq.item i entries, Seq.item j entries, Seq.item k entries)
+                    if i <> j && j <> k && i <> k then 
+                        yield (Seq.item i entries, Seq.item j entries, Seq.item k entries)
     }
 
 let inspectTuples tuples =
@@ -41,3 +41,4 @@ let findAnswer =
 let main argv =
     findAnswer argv.[0]
     0
+    
