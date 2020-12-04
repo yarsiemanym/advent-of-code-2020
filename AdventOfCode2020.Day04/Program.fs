@@ -62,10 +62,10 @@ let hasValidFieldValues fields = List.fold (fun v f -> v && isValidField f) true
 let isValidPassport passport = hasRequiredFields passport.Fields && hasValidFieldValues passport.Fields
 
 let parseField text = 
-    let fields = Regex.Split(text, @":")
+    let tokens = Regex.Split(text, @":")
 
-    if fields.Length = 2 then 
-        { Name = fields.[0]; Value = fields.[1] }
+    if tokens.Length = 2 then 
+        { Name = tokens.[0]; Value = tokens.[1] }
     else
         raise (Exception (sprintf "Malformed field '%s'" text))
 
