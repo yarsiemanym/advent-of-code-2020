@@ -5,6 +5,8 @@ VisualStudioVersion = 15.0.26124.0
 MinimumVisualStudioVersion = 15.0.26124.0
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day01", "AdventOfCode2020.Day01\AdventOfCode2020.Day01.fsproj", "{B12C5269-8C5B-4A7B-B12D-C7988945619B}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day02", "AdventOfCode2020.Day02\AdventOfCode2020.Day02.fsproj", "{69B19BF5-FE9F-4492-9896-DF65FC42086C}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -30,5 +32,17 @@ Global
 		{B12C5269-8C5B-4A7B-B12D-C7988945619B}.Release|x64.Build.0 = Release|Any CPU
 		{B12C5269-8C5B-4A7B-B12D-C7988945619B}.Release|x86.ActiveCfg = Release|Any CPU
 		{B12C5269-8C5B-4A7B-B12D-C7988945619B}.Release|x86.Build.0 = Release|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Debug|x64.Build.0 = Debug|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Debug|x86.Build.0 = Debug|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Release|Any CPU.Build.0 = Release|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Release|x64.ActiveCfg = Release|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Release|x64.Build.0 = Release|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Release|x86.ActiveCfg = Release|Any CPU
+		{69B19BF5-FE9F-4492-9896-DF65FC42086C}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
