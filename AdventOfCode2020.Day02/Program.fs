@@ -11,8 +11,6 @@ type Line =
         Password:string
     }
 
-let toString line = sprintf "Min=%d; Max=%d, Character=%c, Password=%s" line.Min line.Max line.Character line.Password
-
 let parseLines lines =
     let pattern = @"^(\d+)-(\d+)\s+([a-z]):\s+([a-z]+)$"
     seq {
@@ -40,18 +38,16 @@ let countInstanceOf x =
 
 let isBetween min max value = min <= value && value <= max
 
-let isValid_Part1 line = 
-    countInstanceOf line.Character line.Password
-    |> isBetween line.Min line.Max
-
 let charAtIndexIsEqualTo (i, s:string, c) = s.[i - 1] = c
 
-let isValid_Part2 line = charAtIndexIsEqualTo(line.Min, line.Password, line.Character) <> charAtIndexIsEqualTo(line.Max, line.Password, line.Character)
+let isValid line = 
+    // countInstanceOf line.Character line.Password |> isBetween line.Min line.Max
+    charAtIndexIsEqualTo(line.Min, line.Password, line.Character) <> charAtIndexIsEqualTo(line.Max, line.Password, line.Character)
 
 let findValidPasswords lines = 
     seq {
         for line in lines do
-            if isValid_Part2 line then 
+            if isValid line then 
                 yield line.Password
     }
 
