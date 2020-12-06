@@ -4,18 +4,20 @@ open System
 open System.IO
 open System.Text.RegularExpressions
 
+let processPassenger = Set.ofSeq
+
 let processGroup text = 
     Regex.Split(text, @"\s+", RegexOptions.Singleline) 
-    |> Array.filter (not << String.IsNullOrWhiteSpace)
     |> Array.toList
-    |> List.map Set.ofSeq
+    |> List.filter (not << String.IsNullOrWhiteSpace)
+    |> List.map processPassenger
     //|> List.reduce (Set.union)
     |> List.reduce (Set.intersect)
 
 let processFlight text = 
     Regex.Split(text, @"(\s*\n){2,}", RegexOptions.Singleline) 
-    |> Array.filter (not << String.IsNullOrWhiteSpace)
     |> Array.toList
+    |> List.filter (not << String.IsNullOrWhiteSpace)
     |> List.map processGroup
 
 let countYesAnswers = 
