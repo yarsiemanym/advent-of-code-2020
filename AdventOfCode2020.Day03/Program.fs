@@ -2,7 +2,10 @@
 
 open System.IO
 
-type Point = { X: int; Y: int }
+type Point = { 
+    X: int
+    Y: int
+}
 
 let parseLine line = Seq.toList line
 
@@ -26,7 +29,10 @@ let constructPath (slope, map: list<list<char>>) =
     (
         seq {
             for i in 0 .. (heightOf map / slope.Y) - 1 do
-                yield { X = i * slope.X; Y = i * slope.Y }
+                yield { 
+                    X = i * slope.X
+                    Y = i * slope.Y
+                }
          },
          map
     )
@@ -51,11 +57,13 @@ let findAnswer =
 [<EntryPoint>]
 let main argv =
     let slopes =
-        [ { X = 1; Y = 1 }
-          { X = 3; Y = 1 }
-          { X = 5; Y = 1 }
-          { X = 7; Y = 1 }
-          { X = 1; Y = 2 } ]
+        [ 
+            { X = 1; Y = 1 }
+            { X = 3; Y = 1 }
+            { X = 5; Y = 1 }
+            { X = 7; Y = 1 }
+            { X = 1; Y = 2 }
+        ]
 
     let map = readFile argv.[0]
 

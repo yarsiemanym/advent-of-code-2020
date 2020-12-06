@@ -4,8 +4,16 @@ open System
 open System.IO
 open System.Text.RegularExpressions
 
-type Field = { Name:string; Value:string }
-type Passport = { Fields:list<Field>}
+type Field = 
+    { 
+        Name:string
+        Value:string
+    }
+
+type Passport = 
+    { 
+        Fields:list<Field>
+    }
 
 let requiredFields = [ "byr"; "iyr"; "eyr"; "hgt"; "hcl"; "ecl"; "pid" ]
 
