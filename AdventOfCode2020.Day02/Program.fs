@@ -13,6 +13,7 @@ type Line =
 
 let parseLines lines =
     let pattern = @"^(\d+)-(\d+)\s+([a-z]):\s+([a-z]+)$"
+    
     seq {
         for line in lines do
             let m = Regex.Match(line, pattern)
