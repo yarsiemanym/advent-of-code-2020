@@ -25,7 +25,8 @@ let buildTuples entries =
 let inspectTuples tuples =
     seq {
         for tuple in tuples do
-            if sumEquals2020 (tuple) then yield product (tuple)
+            if sumEquals2020 (tuple) then 
+                yield product (tuple)
     }
 
 let printAnswer answer = printfn "The answer is '%d'." answer
