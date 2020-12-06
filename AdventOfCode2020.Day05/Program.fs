@@ -1,7 +1,7 @@
 ﻿module AdventOfCode2020.Day05
 
-open System.IO
 open System
+open System.IO
 
 let partition min max = ((max - min) / 2) + min
 
