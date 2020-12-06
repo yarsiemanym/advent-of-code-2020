@@ -9,14 +9,16 @@ type Passport = { Fields:list<Field>}
 
 let requiredFields = [ "byr"; "iyr"; "eyr"; "hgt"; "hcl"; "ecl"; "pid" ]
 
-let contains (fields, fieldName) = 
+let validEyeColors = [ "amb"; "blu"; "brn"; "gry"; "grn"; "hzl"; "oth" ]
+
+let fieldExists (fields, fieldName) = 
     let contains = 
         List.filter (fun f -> f.Name = fieldName) fields 
         |> List.length 
         |> (<) 0
     contains 
 
-let hasRequiredFields fields = List.fold (fun v f -> v && contains (fields, f)) true requiredFields
+let hasRequiredFields fields = List.fold (fun v f -> v && fieldExists (fields, f)) true requiredFields
 
 let isValidByr byr = 1920 <= byr && byr <= 2002
 
@@ -36,14 +38,11 @@ let isValidHgt (hgt:string) =
         | "in" -> 59 <= value && value <= 76
         | _ -> false
 
-let isValidHcl (hcl:string) = Regex.IsMatch (hcl, @"^#[a-f0-9]{6}$")
+let isValidHcl hcl = Regex.IsMatch (hcl, @"^#[a-f0-9]{6}$")
 
-let isValidEcl (ecl:string) = 
-    match ecl with
-    | "amb" | "blu" | "brn" | "gry" | "grn" | "hzl" | "oth" -> true
-    | _ -> false
+let isValidEcl ecl = List.contains ecl validEyeColors
 
-let isValidPid (pid:string) = Regex.IsMatch(pid, @"^\d{9}$")
+let isValidPid pid = Regex.IsMatch(pid, @"^\d{9}$")
 
 let isValidField field =
     match field.Name with
@@ -55,7 +54,6 @@ let isValidField field =
     | "ecl" -> isValidEcl field.Value
     | "pid" -> isValidPid field.Value
     | _ -> true
-
 
 let hasValidFieldValues fields = List.fold (fun v f -> v && isValidField f) true fields
 
