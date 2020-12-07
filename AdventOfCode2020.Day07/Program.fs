@@ -64,7 +64,7 @@ let readFile =
     >> parseRules
 
 let hasInnerBag innerBagColor rule =
-    Set.map (fun r -> r.InnerBagColor) rule.Contents
+    Set.map (fun c -> c.InnerBagColor) rule.Contents
     |> Set.contains innerBagColor
 
 let rec findValidOuterBags innerBagColor rules =
