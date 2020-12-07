@@ -63,13 +63,13 @@ let readFile =
     File.ReadAllLines
     >> parseRules
 
-let hasInnerBag (innerBagColor, rule) =
+let hasInnerBag innerBagColor rule =
     Set.map (fun r -> r.InnerBagColor) rule.Contents
     |> Set.contains innerBagColor
 
 let rec findValidOuterBags innerBagColor rules =
-    Set.filter (fun r -> hasInnerBag (innerBagColor, r)) rules
-    |> Set.map (fun r -> Set.union (Set.ofList [r.OuterBagColor]) (findValidOuterBags r.OuterBagColor rules))
+    Set.filter (fun r -> hasInnerBag innerBagColor r) rules
+    |> Set.map (fun r -> Set.add r.OuterBagColor (findValidOuterBags r.OuterBagColor rules))
     |> Set.unionMany
 
 let rec countRequiredInnerBags outerBagColor rules =
