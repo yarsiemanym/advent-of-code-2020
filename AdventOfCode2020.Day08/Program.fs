@@ -72,26 +72,28 @@ let modifyOperation instruction =
     | "jmp" -> instruction.Operation <- "nop"
     | _ -> ()
 
-let buildModifiedInstructionSet (instructionSet:list<Instruction>, indexToModify) =
+let buildAlternateInstructionSet (instructionSet:list<Instruction>, indexToModify) =
     let copyOfInstructions = copyInstructionSet instructionSet
     let instruction = copyOfInstructions.Item(indexToModify)
     modifyOperation instruction
     copyOfInstructions
 
-let buildModifiedInstructionSets (instructionSet:list<Instruction>) =
+let buildAlternateInstructionSets (instructionSet:list<Instruction>) =
     seq {
         for i in 0 .. instructionSet.Length - 1 do
-            buildModifiedInstructionSet (instructionSet, i)
+            match instructionSet.Item(i).Operation with
+            | "nop" | "jmp" -> yield buildAlternateInstructionSet (instructionSet, i)
+            | _ -> ()
     }
 
-let testModifiedInstructionSet (instructionSet:list<Instruction>) =
+let testInstructionSet (instructionSet:list<Instruction>) =
     try
         (true, executeInstructionSet instructionSet)
     with
-        | ex -> (false, 0)
+        | _ -> (false, 0)
 
-let testModifiedInstructionSets (instructionSets:seq<list<Instruction>>) = 
-    Seq.map (testModifiedInstructionSet) instructionSets
+let testInstructionSets (instructionSets:seq<list<Instruction>>) = 
+    Seq.map (testInstructionSet) instructionSets
     |> Seq.filter (fun result -> fst(result))
     |> Seq.head
     |> snd
@@ -100,8 +102,8 @@ let printAnswer answer = printfn "The answer is '%d'." answer
 
 let findAnswer = 
     readFile
-    >> buildModifiedInstructionSets
-    >> testModifiedInstructionSets
+    >> buildAlternateInstructionSets
+    >> testInstructionSets
     >> printAnswer
 
 [<EntryPoint>]
