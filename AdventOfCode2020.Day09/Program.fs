@@ -21,7 +21,7 @@ let validateNumbers preambleLength (numbers:list<int64>) =
             let number = numbers.[i]
             let preamble = numbers.[i - preambleLength - 1 .. i - 1]
             let vaildity = isValid number preamble
-            (number, vaildity)
+            yield (number, vaildity)
     }
 
 let findInvalidNumber preambleLength =
