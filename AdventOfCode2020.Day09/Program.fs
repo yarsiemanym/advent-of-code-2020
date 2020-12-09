@@ -20,7 +20,8 @@ let validateNumbers preambleLength (numbers:list<int64>) =
         for i in preambleLength .. numbers.Length - 1 do
             let number = numbers.[i]
             let preamble = numbers.[i - preambleLength - 1 .. i - 1]
-            (number, isValid number preamble)
+            let vaildity = isValid number preamble
+            (number, vaildity)
     }
 
 let findInvalidNumber preambleLength =
@@ -29,13 +30,14 @@ let findInvalidNumber preambleLength =
     >> Seq.map fst
     >> Seq.head
 
-let calcContiguousSum agg number = ((List.append (fst agg) [number]), (snd agg) + number)
+let aggregate agg number = ((fst agg) @ [number], (snd agg) + number)
 
 let findContiguousSums (numbers:list<int64>) target = 
     seq {
         for i in 0 .. numbers.Length - 1 do
             let contiguousNumbers = numbers.[i .. numbers.Length - 1]
-            let candidates = List.scan calcContiguousSum (List.Empty, 0L) contiguousNumbers
+            let initialState = (List.Empty, 0L)
+            let candidates = List.scan aggregate initialState contiguousNumbers
 
             for candidate in candidates do
                 if snd candidate = target then
