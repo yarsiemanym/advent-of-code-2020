@@ -18,14 +18,15 @@ let isValid number (preamble:list<int64>) =
 let validateNumbers preambleLength (numbers:list<int64>) = 
     seq {
         for i in preambleLength .. numbers.Length - 1 do
-            let number = numbers.Item i
-            (number, isValid number numbers.[i - preambleLength - 1 .. i - 1])
+            let number = numbers.[i]
+            let preamble = numbers.[i - preambleLength - 1 .. i - 1]
+            (number, isValid number preamble)
     }
 
 let findInvalidNumber preambleLength =
-    validateNumbers (preambleLength)
+    validateNumbers preambleLength
     >> Seq.filter (not << snd)
-    >> Seq.map (fst)
+    >> Seq.map fst
     >> Seq.head
 
 let calcContiguousSum agg number = ((List.append (fst agg) [number]), (snd agg) + number)
