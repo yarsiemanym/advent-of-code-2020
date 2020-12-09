@@ -5,12 +5,12 @@ open System.IO
 
 let readFile = 
     File.ReadAllLines
-    >> Array.map (int)
+    >> Array.map (int64)
     >> Array.toList
 
 let printAnswer answer = printfn "The answer is '%d'." answer
 
-let isValid number (preamble:list<int>) = 
+let isValid number (preamble:list<int64>) = 
     let mutable isValid = false
     for i in 0 .. preamble.Length - 1 do
         for j in 0 .. preamble.Length - 1 do
@@ -18,7 +18,7 @@ let isValid number (preamble:list<int>) =
                 isValid <- true
     isValid
 
-let validateNumbers preambleLength (numbers:list<int>) = 
+let validateNumbers preambleLength (numbers:list<int64>) = 
     seq {
         for i in preambleLength .. numbers.Length - 1 do
             let number = numbers.Item i
