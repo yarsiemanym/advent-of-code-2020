@@ -4,7 +4,7 @@ open System.IO
 
 let readFile = 
     File.ReadAllLines
-    >> Array.map (int64)
+    >> Array.map int64
     >> Array.toList
 
 let isValid number (preamble:list<int64>) = 
@@ -28,10 +28,9 @@ let findInvalidNumber preambleLength =
     >> Seq.map (fst)
     >> Seq.head
 
-let calcContiguousSum agg number = ((List.append [number] (fst agg )), (snd agg) + number)
-    
+let calcContiguousSum agg number = ((List.append (fst agg) [number]), (snd agg) + number)
 
-let calcContiguousSums (numbers:list<int64>) target = 
+let findContiguousSums (numbers:list<int64>) target = 
     seq {
         for i in 0 .. numbers.Length - 1 do
             let contiguousNumbers = numbers.[i .. numbers.Length - 1]
@@ -50,7 +49,7 @@ let findAnswer preambleLength filePath =
     let numbers = readFile filePath
     
     findInvalidNumber preambleLength numbers
-    |> calcContiguousSums numbers
+    |> findContiguousSums numbers
     |> Seq.head
     |> calcXmasWeakness
     |> printAnswer
