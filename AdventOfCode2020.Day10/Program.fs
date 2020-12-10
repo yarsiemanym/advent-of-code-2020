@@ -4,13 +4,31 @@ open System
 open System.IO
 
 type Joltable =
-    | Outlet of Output:int
-    | Adapter of MinInput:int * MaxInput:int * Output:int
-    | Device of MinInput:int * MaxInput:int
+    | Outlet
+    | Adapter of Output:int
+    | Device of MaxInput:int
+
+    member this.Output =
+        match this with
+        | Outlet _ -> 0
+        | Adapter output -> output
+        | Device maxInput -> maxInput
+
+    member this.MinInput =
+        match this with
+        | Outlet _ -> 0
+        | Adapter output -> output - 3
+        | Device maxInput -> maxInput - 3
+     
+    member this.MaxInput =
+        match this with
+        | Outlet _ -> 0
+        | Adapter output -> output - 1
+        | Device maxInput -> maxInput 
 
 let parseAdapter text = 
     let value = int text
-    Adapter(MinInput = value - 3, MaxInput = value - 1, Output = value)
+    Adapter(Output = value)
 
 let parseAdapters lines =
     [
@@ -23,31 +41,40 @@ let readFile =
     >> parseAdapters
 
 let maxJoltageDifference = 
-    List.choose (fun jolt -> 
-        match jolt with
-        | Outlet (output) | Adapter (_, _, output) -> Some output
-        | Device (_, maxInput) -> Some maxInput)
+    List.map (fun (joltable:Joltable) -> joltable.Output)
     >> List.max
 
-let useAllAdapters adapters = 
-    let maxAdapterOutput = maxJoltageDifference adapters
-    let outlet = Outlet(Output = 0)
-    let device = Adapter(MinInput = maxAdapterOutput, MaxInput = maxAdapterOutput + 3, Output = maxAdapterOutput + 3)
+let addOutlet joltables =
+    let outlet = Outlet
+    [outlet] @ joltables
 
-    [outlet]
-    @ List.sortBy (fun joltable -> 
-        match joltable with
-        | Adapter (_, _, output) -> Some output
-        | _ -> None) adapters 
-    @ [device]
+let addDevice joltables =
+    let maxAdapterOutput = maxJoltageDifference joltables
+    let device = Device(MaxInput = maxAdapterOutput + 3)
+    joltables @ [device]
 
-let aggregator difference aggregation joltable = 
-    match joltable with
-    | Outlet output -> (output, 0)
-    | Adapter (_, _, output) -> if output - (fst aggregation) = difference then (output, (snd aggregation) + 1) else (output, snd aggregation)
-    | Device (_, maxInput) -> (maxInput, (snd aggregation) + 1)
+let useAllAdapters = List.sortBy (fun (joltable:Joltable) -> joltable.Output)
+
+let isBetween min max value = min <= value && value <= max
+
+let countCompatibleJoltables (source:Joltable) = 
+    List.filter (fun (joltable:Joltable) -> source.Output |> isBetween joltable.MinInput joltable.MaxInput)
+    >> List.length
+    >> uint64
+
+let rec countValidAdapterChains (source:Joltable) choices = 
+    let validChoices = List.filter (fun (joltable:Joltable) -> source.Output |> isBetween joltable.MinInput joltable.MaxInput) choices
+
+    match source with
+    | Device (_) -> 1UL
+    | _ -> List.fold (fun count joltable -> count + (countValidAdapterChains joltable (List.except [joltable] choices))) 0UL validChoices
+
+let aggregator difference aggregation (joltable:Joltable) = 
+    if joltable.Output - (fst aggregation) = difference then 
+        (joltable.Output, (snd aggregation) + 1) 
+    else 
+        (joltable.Output, snd aggregation)
     
-
 let countJoltageDifferences difference joltables = 
     List.scan (aggregator difference) (0, 0) joltables
     |> List.last
@@ -59,14 +86,23 @@ let analyzeJoltageDifferences joltables =
     let differential3 = countJoltageDifferences 3 joltables
     [differential1; differential2; differential3]
 
-let findAnswer (counts:list<int>) = counts.[0] * counts.[2]
+let calcPart1Answer (counts:list<int>) = counts.[0] * counts.[2]
 
 [<EntryPoint>]
 let main argv =
-    readFile argv.[0]
+    let adapters = readFile argv.[0]
+
+    adapters
+    |> addOutlet
+    |> addDevice
     |> useAllAdapters
     |> analyzeJoltageDifferences
-    |> findAnswer
+    |> calcPart1Answer
     |> printfn "The answer to part 1 is '%d'."
+
+    adapters
+    |> addDevice
+    |> countValidAdapterChains Outlet
+    |> printfn "The answer to part 2 is '%d'."
     
     0
