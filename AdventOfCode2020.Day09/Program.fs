@@ -51,10 +51,7 @@ let main argv =
     let preambleLength = int argv.[0]
     let numbers = readFile argv.[1]
 
-    validateNumbers preambleLength numbers
-    |> Seq.filter (snd >> ((=) false))
-    |> Seq.head
-    |> fst
+    findInvalidNumber preambleLength numbers
     |> printfn "The answer to part 1 is '%d'."
 
     findInvalidNumber (int argv.[0]) numbers
