@@ -50,11 +50,12 @@ let calcXmasWeakness (numbers:list<int64>) = (List.min numbers) + (List.max numb
 let main argv =
     let preambleLength = int argv.[0]
     let numbers = readFile argv.[1]
+    let invalidNumber = findInvalidNumber preambleLength numbers
 
-    findInvalidNumber preambleLength numbers
+    invalidNumber
     |> printfn "The answer to part 1 is '%d'."
 
-    findInvalidNumber (int argv.[0]) numbers
+    invalidNumber
     |> findContiguousSums numbers
     |> Seq.head
     |> calcXmasWeakness
