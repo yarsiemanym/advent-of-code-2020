@@ -21,7 +21,7 @@ let parseInstruction text =
             HasExecuted = false
         }
     else
-        raise (Exception (sprintf "Invalid instruction '%s'" text))
+        failwithf "Invalid instruction '%s'" text
 
 let parseInstructionSet lines =
     [
@@ -33,7 +33,7 @@ let readFile =
     File.ReadAllLines
     >> parseInstructionSet
 
-let executeInstructionSet (instructionSet:list<Instruction>) =
+let executeInstructionSet throw (instructionSet:list<Instruction>) =
     let mutable pointer = 0
     let mutable continueLoop = true
     let mutable accumulator = 0
@@ -47,12 +47,14 @@ let executeInstructionSet (instructionSet:list<Instruction>) =
             | "acc" -> accumulator <- accumulator + instruction.Value; pointer <- pointer + 1
             | "jmp" -> pointer <- pointer + instruction.Value
             | "nop" -> pointer <- pointer + 1
-            | _ -> raise (Exception (sprintf "Unsupported operation '%s'" instruction.Operation))
+            | _ -> failwithf "Unsupported operation '%s'" instruction.Operation
             
             instruction.HasExecuted <- true
             continueLoop <- pointer < instructionSet.Length
+        else if not throw then
+            continueLoop <- false
         else
-            raise (Exception (sprintf "Infinite loop detected at position %d" pointer))
+            failwithf "Infinite loop detected at position %d" pointer
     
     accumulator
 
@@ -88,25 +90,25 @@ let buildAlternateInstructionSets (instructionSet:list<Instruction>) =
 
 let testInstructionSet (instructionSet:list<Instruction>) =
     try
-        (true, executeInstructionSet instructionSet)
+        (true, executeInstructionSet true instructionSet)
     with
         | _ -> (false, 0)
 
 let testInstructionSets (instructionSets:seq<list<Instruction>>) = 
-    Seq.map (testInstructionSet) instructionSets
+    Seq.map testInstructionSet instructionSets
     |> Seq.filter (fun result -> fst(result))
     |> Seq.head
     |> snd
 
-let printAnswer answer = printfn "The answer is '%d'." answer
-
-let findAnswer = 
-    readFile
-    >> buildAlternateInstructionSets
-    >> testInstructionSets
-    >> printAnswer
-
 [<EntryPoint>]
 let main argv =
-    findAnswer argv.[0]
+
+    readFile argv.[0]
+    |> executeInstructionSet false
+    |> printfn "The answer to part 1 is '%d'."
+
+    readFile argv.[0]
+    |> buildAlternateInstructionSets
+    |> testInstructionSets
+    |> printfn "The answer to part 2 is '%d'."
     0

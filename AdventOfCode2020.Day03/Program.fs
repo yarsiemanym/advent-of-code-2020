@@ -56,6 +56,12 @@ let findAnswer =
 
 [<EntryPoint>]
 let main argv =
+
+    let map = readFile argv.[0]
+
+    findAnswer ({ X = 3; Y = 1 }, map)
+    |> printfn "The answer to part 1 is '%u'."
+
     let slopes =
         [ 
             { X = 1; Y = 1 }
@@ -65,13 +71,14 @@ let main argv =
             { X = 1; Y = 2 }
         ]
 
-    let map = readFile argv.[0]
-
     let treeCounts =
         [ 
             for slope in slopes do
                 yield findAnswer (slope, map)
         ]
 
-    treeCounts |> List.fold (*) 1 |> printAnswer
+    treeCounts 
+    |> List.fold (*) 1 
+    |> printfn "The answer to part 2 is '%u'."
+
     0

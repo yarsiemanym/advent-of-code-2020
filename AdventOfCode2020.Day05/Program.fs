@@ -12,7 +12,7 @@ let rec calcLocation (key:string, min, max) =
         match key.[0] with
         | 'F' | 'L' -> calcLocation (key.[1..], min, partition min max)
         | 'B' | 'R' -> calcLocation (key.[1..], partition min max, max)
-        | _ -> raise (Exception (sprintf "Invalid parition key '%c' in '%s'" key.[0] key))
+        | _ -> failwithf "Invalid parition key '%c' in '%s'" key.[0] key
 
 let locateSeat (key:string) =
     let rowKey = key.[0..6]
@@ -37,18 +37,19 @@ let findUnoccupiedSeatId occupiedSeatIds =
     [List.min occupiedSeatIds .. List.max occupiedSeatIds]
     |> List.except occupiedSeatIds
     |> List.head
-    
-let printAnswer answer = printfn "The answer is '%d'." answer
-
-let finadAnswer =
-    File.ReadAllLines
-    >> Array.toList
-    >> locateSeats
-    >> calcSeatIds
-    >> findUnoccupiedSeatId
-    >> printAnswer
 
 [<EntryPoint>]
 let main argv =
-    finadAnswer argv.[0]
+    let seatIds = 
+        File.ReadAllLines argv.[0]
+        |> Array.toList
+        |> locateSeats
+        |> calcSeatIds
+
+    List.max seatIds
+    |> printfn "The answer to part 1 is '%d'."
+
+    findUnoccupiedSeatId seatIds
+    |> printfn "The answer to part 2 is '%d'."
+
     0

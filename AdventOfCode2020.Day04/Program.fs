@@ -65,7 +65,9 @@ let isValidField field =
 
 let hasValidFieldValues fields = List.fold (fun v f -> v && isValidField f) true fields
 
-let isValidPassport passport = hasRequiredFields passport.Fields && hasValidFieldValues passport.Fields
+let isValidPassportPart1 passport = hasRequiredFields passport.Fields
+
+let isValidPassportPart2 passport = hasRequiredFields passport.Fields && hasValidFieldValues passport.Fields
 
 let parseField text = 
     let tokens = Regex.Split(text, @":")
@@ -73,7 +75,7 @@ let parseField text =
     if tokens.Length = 2 then 
         { Name = tokens.[0]; Value = tokens.[1] }
     else
-        raise (Exception (sprintf "Malformed field '%s'" text))
+        failwithf "Malformed field '%s'" text
 
 let parseFields text =
     let fields = 
@@ -99,22 +101,25 @@ let readFile =
     File.ReadAllText 
     >> parsePassports
 
-let inspectPassports passports =
+let inspectPassports passports validator =
     [
         for passport in passports do
-            yield isValidPassport passport
+            yield validator passport
     ]
 
-let printAnswer answer = printfn "The answer is '%d'." answer
-
-let findAnswer =
-    readFile
-    >> inspectPassports
-    >> List.filter ((=) true)
-    >> List.length
-    >> printAnswer
+let findAnswer passports validator =
+    inspectPassports passports validator
+    |> List.filter ((=) true)
+    |> List.length
 
 [<EntryPoint>]
 let main argv =
-    findAnswer argv.[0]
+    let passports = readFile argv.[0]
+
+    findAnswer passports isValidPassportPart1
+    |> printfn "The answer to part 1 is '%d'."
+
+    findAnswer passports isValidPassportPart2
+    |> printfn "The answer to part 2 is '%d'."
+
     0

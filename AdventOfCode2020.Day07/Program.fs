@@ -26,7 +26,7 @@ let parseInnerBag text =
             Quantity = int(m.Groups.Item(1).Value)
         }
     else
-        raise (Exception (sprintf "Invalid contents '%s'" text))
+        failwithf "Invalid contents '%s'" text
 
 
 let parseInnerBags text = 
@@ -50,7 +50,7 @@ let parseRule text =
             Contents = parseInnerBags (m.Groups.Item(2).Value)
         }
     else
-        raise (Exception (sprintf "Invalid rule '%s'" text))
+        failwithf "Invalid rule '%s'" text
 
 let parseRules lines =
     Set.ofList
@@ -80,16 +80,15 @@ let rec countRequiredInnerBags outerBagColor rules =
     |> Set.toList
     |> List.sum
 
-let printAnswer answer = printfn "The answer is '%d'." answer
-
-let findAnswer = 
-    readFile
-    //>> findValidOuterBags "shiny gold"
-    //>> Set.count
-    >> countRequiredInnerBags "shiny gold"
-    >> printAnswer
-
 [<EntryPoint>]
 let main argv =
-    findAnswer argv.[0]
+    let rules = readFile argv.[0]
+
+    findValidOuterBags "shiny gold" rules
+    |> Set.count
+    |> printfn "The answer to part 1 is '%d'."
+
+    countRequiredInnerBags "shiny gold" rules
+    |> printfn "The answer to part 2 is '%d'."
+
     0

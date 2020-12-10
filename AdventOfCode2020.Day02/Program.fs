@@ -14,7 +14,7 @@ type Line =
 let parseLines lines =
     let pattern = @"^(\d+)-(\d+)\s+([a-z]):\s+([a-z]+)$"
     
-    seq {
+    [
         for line in lines do
             let m = Regex.Match(line, pattern)
 
@@ -26,41 +26,44 @@ let parseLines lines =
                     Password = m.Groups.Item(4).Value
                 } 
             else
-                printfn "Invalid line '%s'" line
-    }
+                failwithf "Invalid line '%s'" line
+    ]
 
 let readFile =
     File.ReadAllLines 
     >> parseLines
 
 let countInstanceOf x =
-    Seq.filter ((=) x) 
-    >> Seq.length
+    Seq.toList
+    >> List.filter ((=) x) 
+    >> List.length
 
 let isBetween min max value = min <= value && value <= max
 
 let charAtIndexIsEqualTo (i, s:string, c) = s.[i - 1] = c
 
-let isValid line = 
-    // countInstanceOf line.Character line.Password |> isBetween line.Min line.Max
-    charAtIndexIsEqualTo(line.Min, line.Password, line.Character) <> charAtIndexIsEqualTo(line.Max, line.Password, line.Character)
+let isValidPart1 line = countInstanceOf line.Character line.Password |> isBetween line.Min line.Max
 
-let findValidPasswords lines = 
-    seq {
+let isValidPart2 line = charAtIndexIsEqualTo(line.Min, line.Password, line.Character) <> charAtIndexIsEqualTo(line.Max, line.Password, line.Character)
+
+let validatePasswords lines validator = 
+    [
         for line in lines do
-            if isValid line then 
-                yield line.Password
-    }
-
-let printAnswer answer = printfn "The answer is '%d'." answer
-
-let findAnswer = 
-    readFile
-    >> findValidPasswords
-    >> Seq.length
-    >> printAnswer
+            yield validator line
+    ]
 
 [<EntryPoint>]
 let main argv =
-    findAnswer argv.[0]
+    let lines = readFile argv.[0]
+    
+    validatePasswords lines isValidPart1
+    |> List.filter ((=) true)
+    |> List.length
+    |> printfn "The answer to part 1 is '%d'."
+
+    validatePasswords lines isValidPart2
+    |> List.filter ((=) true)
+    |> List.length
+    |> printfn "The answer to part 2 is '%d'."
+
     0

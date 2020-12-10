@@ -46,18 +46,20 @@ let findContiguousSums (numbers:list<int64>) target =
 
 let calcXmasWeakness (numbers:list<int64>) = (List.min numbers) + (List.max numbers)
 
-let printAnswer answer = printfn "The answer is '%d'." answer
+[<EntryPoint>]
+let main argv =
+    let preambleLength = int argv.[0]
+    let numbers = readFile argv.[1]
 
-let findAnswer preambleLength filePath = 
-    let numbers = readFile filePath
-    
-    findInvalidNumber preambleLength numbers
+    validateNumbers preambleLength numbers
+    |> Seq.filter (snd >> ((=) false))
+    |> Seq.head
+    |> fst
+    |> printfn "The answer to part 1 is '%d'."
+
+    findInvalidNumber (int argv.[0]) numbers
     |> findContiguousSums numbers
     |> Seq.head
     |> calcXmasWeakness
-    |> printAnswer
-
-[<EntryPoint>]
-let main argv =
-    findAnswer (int argv.[0]) argv.[1]
+    |> printfn "The answer to part 2 is '%d'."
     0
