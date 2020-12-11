@@ -2,6 +2,8 @@
 
 open System
 open System.IO
+open System.Collections.Generic
+open System.Linq
 
 type Joltable =
     | Outlet
@@ -57,15 +59,15 @@ let useAllAdapters = List.sortBy (fun (joltable:Joltable) -> joltable.Output)
 
 let isBetween min max value = min <= value && value <= max
 
-let mutable cache = []
+let cache = new Dictionary<Joltable, uint64>()
 
 let checkCache source = 
-    if List.exists (fun c -> fst c = source) cache then
-        (true, List.filter (fun c -> fst c = source) cache |> List.head |> snd)
+    if cache.Keys.Contains(source) then
+        (true, cache.[source])
     else
         (false, 0UL)
 
-let addToCache source count = cache <- cache @ [(source, count)]
+let addToCache source count = cache.[source] <- count
 
 let rec countValidAdapterChains (source:Joltable) choices = 
     let cacheEntry = checkCache source
