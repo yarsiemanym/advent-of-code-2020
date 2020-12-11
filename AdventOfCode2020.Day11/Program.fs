@@ -43,6 +43,12 @@ let widthOf map = List.item 0 map |> List.length
 
 let getCoord (x, y) map = List.item y map |> List.item x
 
+let printMap (map:list<list<Space>>) =
+    for row in map do
+        for space in row do
+            printf "%c" space.Symbol
+        printfn ""
+
 let determineDirectionsToCheck x y map =
     let xMin = if x <= 0 then 0 else x - 1
     let xMax = if x >= widthOf map - 1 then widthOf map - 1 else x + 1
