@@ -57,17 +57,30 @@ let useAllAdapters = List.sortBy (fun (joltable:Joltable) -> joltable.Output)
 
 let isBetween min max value = min <= value && value <= max
 
-let countCompatibleJoltables (source:Joltable) = 
-    List.filter (fun (joltable:Joltable) -> source.Output |> isBetween joltable.MinInput joltable.MaxInput)
-    >> List.length
-    >> uint64
+let mutable cache = []
+
+let checkCache source = 
+    if List.exists (fun c -> fst c = source) cache then
+        (true, List.filter (fun c -> fst c = source) cache |> List.head |> snd)
+    else
+        (false, 0UL)
+
+let addToCache source count = cache <- cache @ [(source, count)]
 
 let rec countValidAdapterChains (source:Joltable) choices = 
-    let validChoices = List.filter (fun (joltable:Joltable) -> source.Output |> isBetween joltable.MinInput joltable.MaxInput) choices
+    let cacheEntry = checkCache source
 
-    match source with
-    | Device (_) -> 1UL
-    | _ -> List.fold (fun count joltable -> count + (countValidAdapterChains joltable (List.except [joltable] choices))) 0UL validChoices
+    if fst cacheEntry then
+        snd cacheEntry
+    else
+        let validChoices = List.filter (fun (joltable:Joltable) -> source.Output |> isBetween joltable.MinInput joltable.MaxInput) choices
+
+        match source with
+        | Device (_) -> 1UL
+        | _ -> 
+            let count = List.fold (fun count joltable -> count + (countValidAdapterChains joltable (List.except [joltable] choices))) 0UL validChoices
+            addToCache source count
+            count
 
 let aggregator difference aggregation (joltable:Joltable) = 
     if joltable.Output - (fst aggregation) = difference then 
@@ -106,3 +119,4 @@ let main argv =
     |> printfn "The answer to part 2 is '%d'."
     
     0
+    
