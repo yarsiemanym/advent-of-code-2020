@@ -34,6 +34,90 @@ type Map =
                 printf "%c" space.Symbol
             printfn ""
 
+    member this.GetVisibleDirections (x, y) = 
+        let xMin = if x <= 0 then 0 else x - 1
+        let xMax = if x >= this.Width - 1 then this.Width - 1 else x + 1
+        let yMin = if y <= 0 then 0 else y - 1
+        let yMax = if y >= this.Height - 1 then this.Height - 1 else y + 1
+
+        [
+            for i in yMin .. yMax do
+                for j in xMin .. xMax do
+                    if (j, i) <> (x, y) then
+                        yield (j - x, i - y)
+        ]
+
+    member this.CountOccupiedAdjacentSeats (x, y) =
+        [
+            for direction in this.GetVisibleDirections (x, y) do
+                yield this.GetCoord ((fst direction + x), (snd direction + y))
+        ]
+        |> List.filter (fun (space:Space) -> space.IsOccupied)
+        |> List.length
+
+    member this.DetermineLineOfSight (x, y) (dx, dy) =
+        let xMagnitude = if dx < 0 then x / abs dx else if dx = 0 then Int32.MaxValue else (this.Width - 1 - x) / dx
+        let yMagnitude = if dy < 0 then y / abs dy else if dy = 0 then Int32.MaxValue else (this.Height - 1 - y) / dy
+        let magnitude = min xMagnitude yMagnitude
+
+        [
+            for i in 1 .. magnitude do
+                yield (x + (i * dx), y + (i * dy))
+        ]
+     
+    member this.CanSeeOccupiedSeat (x, y) (dx, dy) =
+        this.DetermineLineOfSight (x, y) (dx, dy)
+        |> List.map this.GetCoord
+        |> List.filter (fun (space:Space) -> match space with | Seat(_) -> true | _ -> false)
+        |> List.tryHead
+        |> (fun seat -> if seat.IsNone then false else seat.Value.IsOccupied)
+
+    member this.CountOccupiedVisibleSeats (x, y) =
+        this.GetVisibleDirections (x, y)
+        |> List.filter (this.CanSeeOccupiedSeat (x, y))
+        |> List.length
+
+    member this.SimulateOneRound occupiedSeatCounter threshold =
+        {
+            Spaces =
+            [
+                for i in 0 .. this.Height - 1 do
+                    let row = this.Spaces.[i]
+                    [
+                        for j in 0 .. this.Width - 1 do
+                            let space = row.[j]
+
+                            match space with
+                            | Floor -> yield space
+                            | Seat(occupied) -> 
+                                if occupied && (occupiedSeatCounter this (j, i)) >= threshold then 
+                                    yield Seat(Occupied = false)
+                                else if not occupied && (occupiedSeatCounter this (j, i)) = 0 then
+                                    yield Seat(Occupied = true)
+                                else yield space
+                    ]
+            ]
+        }
+
+    member this.RunSimulation occupiedSeatCounter threshold =
+        let mutable currentMap = this
+        let mutable continueLoop = true
+
+        while continueLoop do
+            let newMap = currentMap.SimulateOneRound occupiedSeatCounter threshold
+            continueLoop <- newMap <> currentMap
+            currentMap <- newMap
+
+        currentMap.Spaces
+        |> List.concat
+        |> List.choose (fun space -> 
+            match space with
+            | Seat(occupied) -> Some occupied
+            | _ -> None) 
+        |> List.filter ((=) true)
+        |> List.length
+
+
 let parseSpace symbol = 
     match symbol with
     | '.' -> Floor
@@ -47,8 +131,8 @@ let parseSpaces rows =
         [
             for row in rows do
                 [
-                    for space in row do
-                        yield parseSpace space
+                    for symbol in row do
+                        yield parseSpace symbol
                 ]
         ]
     }
@@ -57,99 +141,18 @@ let readFile =
     File.ReadAllLines
     >> parseSpaces
 
-let determineDirectionsToCheck (x, y) (map:Map) =
-    let xMin = if x <= 0 then 0 else x - 1
-    let xMax = if x >= map.Width - 1 then map.Width - 1 else x + 1
-    let yMin = if y <= 0 then 0 else y - 1
-    let yMax = if y >= map.Height - 1 then map.Height - 1 else y + 1
+let countOccupiedAdjacentSeats (map:Map) = map.CountOccupiedAdjacentSeats
 
-    [
-        for i in yMin .. yMax do
-            for j in xMin .. xMax do
-                if (j, i) <> (x, y) then
-                    yield (j - x, i - y)
-    ]
-
-let countOccupiedAdjacentSeats (x, y) map =
-    [
-        for direction in (determineDirectionsToCheck (x, y) map) do
-            yield map.GetCoord ((fst direction + x), (snd direction + y))
-    ]
-    |> List.filter (fun (space:Space) -> space.IsOccupied)
-    |> List.length
-
-let determineLineOfSight (x, y) (map:Map) (dx, dy) = 
-    let xMagnitude = if dx < 0 then x / abs dx else if dx = 0 then Int32.MaxValue else (map.Width - 1 - x) / dx
-    let yMagnitude = if dy < 0 then y / abs dy else if dy = 0 then Int32.MaxValue else (map.Height - 1 - y) / dy
-    let magnitude = min xMagnitude yMagnitude
-
-    [
-        for i in 1 .. magnitude do
-            yield (x + (i * dx), y + (i * dy))
-    ]
-
-let canSeeOccupiedSeat (x, y) map (dx, dy) =
-   determineLineOfSight (x, y) map (dx, dy)
-   |> List.map map.GetCoord
-   |> List.filter (fun (space:Space) -> match space with | Seat(_) -> true | _ -> false)
-   |> List.tryHead
-   |> (fun seat -> if seat.IsNone then false else seat.Value.IsOccupied)
-
-let countOccupiedVisibleSeats (x, y) map = 
-    determineDirectionsToCheck (x, y) map
-    |> List.filter (canSeeOccupiedSeat (x, y) map)
-    |> List.length
-    
-let simulateOneRound occupiedSeatCounter threshold (map:Map)  =
-    {
-        Spaces =
-        [
-            for i in 0 .. map.Height - 1 do
-                let row = map.Spaces.[i]
-                [
-                    for j in 0 .. map.Width - 1 do
-                        let space = row.[j]
-
-                        match space with
-                        | Floor -> yield space
-                        | Seat(occupied) -> 
-                            if occupied && (occupiedSeatCounter (j, i) map) >= threshold then 
-                                yield Seat(Occupied = false)
-                            else if not occupied && (occupiedSeatCounter (j, i) map) = 0 then
-                                yield Seat(Occupied = true)
-                            else yield space
-                ]
-        ]
-    }
-
-let runSimulation occupiedSeatCounter threshold initialMap =
-    let mutable currentMap = initialMap
-    let mutable continueLoop = true
-
-    while continueLoop do
-        let newMap = simulateOneRound occupiedSeatCounter threshold currentMap
-        continueLoop <- newMap <> currentMap
-        currentMap <- newMap
-
-    currentMap.Spaces
-    |> List.concat
-    |> List.choose (fun space -> 
-        match space with
-        | Seat(occupied) -> Some occupied
-        | _ -> None) 
-    |> List.filter ((=) true)
-    |> List.length
+let countOccupiedVisibleSeats (map:Map) = map.CountOccupiedVisibleSeats
 
 [<EntryPoint>]
 let main argv =
-    let originalMap = readFile argv.[0]
+    let map = readFile argv.[0]
     
-    originalMap
-    |> runSimulation countOccupiedAdjacentSeats 4
+    map.RunSimulation countOccupiedAdjacentSeats 4
     |> printfn "The answer to part 1 is '%d'."
 
-    originalMap
-    |> runSimulation countOccupiedVisibleSeats 5
+    map.RunSimulation countOccupiedVisibleSeats 5
     |> printfn "The answer to part 2 is '%d'."
 
     0
