@@ -30,9 +30,9 @@ type Map =
     
     member this.Print = 
         for row in this.Spaces do
-        for space in row do
-            printf "%c" space.Symbol
-        printfn ""
+            for space in row do
+                printf "%c" space.Symbol
+            printfn ""
 
 let parseSpace symbol = 
     match symbol with
