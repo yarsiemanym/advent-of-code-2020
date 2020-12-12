@@ -13,38 +13,55 @@ module Day12 =
             Value:int
         }
 
-    type Ferry = 
+    type Point =
         {
             X:int
             Y:int
+        }
+
+    type Ferry = 
+        {
+            Position:Point
             Heading:char
         }
 
         member this.MoveNorth value =
             {
-                X = this.X
-                Y = this.Y - value
+                Position = 
+                    { 
+                        X = this.Position.X; 
+                        Y = this.Position.Y - value
+                    }
                 Heading = this.Heading
             }
 
         member this.MoveEast value =
             {
-                X = this.X + value
-                Y = this.Y
+                Position =
+                    {
+                        X = this.Position.X + value
+                        Y = this.Position.Y
+                    }
                 Heading = this.Heading
             }
 
         member this.MoveSouth value =
             {
-                X = this.X
-                Y = this.Y + value
+                Position = 
+                    {
+                        X = this.Position.X
+                        Y = this.Position.Y + value
+                    }
                 Heading = this.Heading
             }
 
         member this.MoveWest value =
             {
-                X = this.X - value
-                Y = this.Y
+                Position =
+                    {
+                        X = this.Position.X - value
+                        Y = this.Position.Y
+                    }
                 Heading = this.Heading
             }
 
@@ -53,15 +70,17 @@ module Day12 =
             let newIndex = (directions.Length + currentIndex + (value / 90)) % directions.Length
             
             {
-                X = this.X
-                Y = this.Y
+                Position = this.Position 
                 Heading = directions.[newIndex]
             }
 
         member this.MoveForward value =
             {
-                X = if this.Heading = 'E' then this.X + value else if this.Heading = 'W' then this.X - value else this.X
-                Y = if this.Heading = 'S' then this.Y + value else if this.Heading = 'N' then this.Y - value else this.Y
+                Position =
+                    {
+                        X = if this.Heading = 'E' then this.Position.X + value else if this.Heading = 'W' then this.Position.X - value else this.Position.X
+                        Y = if this.Heading = 'S' then this.Position.Y + value else if this.Heading = 'N' then this.Position.Y - value else this.Position.Y
+                    }
                 Heading = this.Heading
             }
 
@@ -101,16 +120,25 @@ module Day12 =
         File.ReadAllLines
         >> parseInstructions
 
-    let manhattanDistance (x1, y1) (x2, y2) = (abs (x2 - x1)) + (abs (y2 - y1))
+    let manhattanDistance start finish = (abs (finish.X - start.X)) + (abs (finish.Y - start.Y))
 
     [<EntryPoint>]
     let main argv =
         let instructions = readFile argv.[0]
 
-        let start = { X=0; Y=0; Heading='E' }
+        let start = 
+            { 
+                Position =
+                    {
+                        X = 0
+                        Y = 0
+                    }
+                Heading = 'E'
+            }
+
         let finish1 = start.FollowInstructions instructions
 
-        manhattanDistance (start.X, start.Y) (finish1.X, finish1.Y)
+        manhattanDistance start.Position finish1.Position
         |> printfn "The answer to part 1 is '%d'."
 
         0
