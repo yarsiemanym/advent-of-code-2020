@@ -1,63 +1,65 @@
-﻿module AdventOfCode2020.Day09
+﻿namespace AdventOfCode2020
 
 open System.IO
 
-let readFile = 
-    File.ReadAllLines
-    >> Array.map int64
-    >> Array.toList
+module Day09 = 
 
-let isValid number (preamble:list<int64>) = 
-    let mutable isValid = false
-    for i in 0 .. preamble.Length - 1 do
-        for j in 0 .. preamble.Length - 1 do
-            if i <> j && preamble.[i] + preamble.[j] = number then
-                isValid <- true
-    isValid
+    let readFile = 
+        File.ReadAllLines
+        >> Array.map int64
+        >> Array.toList
 
-let validateNumbers preambleLength (numbers:list<int64>) = 
-    seq {
-        for i in preambleLength .. numbers.Length - 1 do
-            let number = numbers.[i]
-            let preamble = numbers.[i - preambleLength - 1 .. i - 1]
-            let vaildity = isValid number preamble
-            yield (number, vaildity)
-    }
+    let isValid number (preamble:list<int64>) = 
+        let mutable isValid = false
+        for i in 0 .. preamble.Length - 1 do
+            for j in 0 .. preamble.Length - 1 do
+                if i <> j && preamble.[i] + preamble.[j] = number then
+                    isValid <- true
+        isValid
 
-let findInvalidNumber preambleLength =
-    validateNumbers preambleLength
-    >> Seq.filter (not << snd)
-    >> Seq.map fst
-    >> Seq.head
+    let validateNumbers preambleLength (numbers:list<int64>) = 
+        seq {
+            for i in preambleLength .. numbers.Length - 1 do
+                let number = numbers.[i]
+                let preamble = numbers.[i - preambleLength - 1 .. i - 1]
+                let vaildity = isValid number preamble
+                yield (number, vaildity)
+        }
 
-let aggregate agg number = ((fst agg) @ [number], (snd agg) + number)
+    let findInvalidNumber preambleLength =
+        validateNumbers preambleLength
+        >> Seq.filter (not << snd)
+        >> Seq.map fst
+        >> Seq.head
 
-let findContiguousSums (numbers:list<int64>) target = 
-    seq {
-        for i in 0 .. numbers.Length - 1 do
-            let contiguousNumbers = numbers.[i .. numbers.Length - 1]
-            let initialState = (List.Empty, 0L)
-            let candidates = List.scan aggregate initialState contiguousNumbers
+    let aggregate agg number = ((fst agg) @ [number], (snd agg) + number)
 
-            for candidate in candidates do
-                if snd candidate = target then
-                    yield fst candidate
-    }
+    let findContiguousSums (numbers:list<int64>) target = 
+        seq {
+            for i in 0 .. numbers.Length - 1 do
+                let contiguousNumbers = numbers.[i .. numbers.Length - 1]
+                let initialState = (List.Empty, 0L)
+                let candidates = List.scan aggregate initialState contiguousNumbers
 
-let calcXmasWeakness (numbers:list<int64>) = (List.min numbers) + (List.max numbers)
+                for candidate in candidates do
+                    if snd candidate = target then
+                        yield fst candidate
+        }
 
-[<EntryPoint>]
-let main argv =
-    let preambleLength = int argv.[0]
-    let numbers = readFile argv.[1]
-    let invalidNumber = findInvalidNumber preambleLength numbers
+    let calcXmasWeakness (numbers:list<int64>) = (List.min numbers) + (List.max numbers)
 
-    invalidNumber
-    |> printfn "The answer to part 1 is '%d'."
+    [<EntryPoint>]
+    let main argv =
+        let preambleLength = int argv.[0]
+        let numbers = readFile argv.[1]
+        let invalidNumber = findInvalidNumber preambleLength numbers
 
-    invalidNumber
-    |> findContiguousSums numbers
-    |> Seq.head
-    |> calcXmasWeakness
-    |> printfn "The answer to part 2 is '%d'."
-    0
+        invalidNumber
+        |> printfn "The answer to part 1 is '%d'."
+
+        invalidNumber
+        |> findContiguousSums numbers
+        |> Seq.head
+        |> calcXmasWeakness
+        |> printfn "The answer to part 2 is '%d'."
+        0

@@ -1,55 +1,57 @@
-﻿module AdventOfCode2020.Day01
+﻿namespace AdventOfCode2020
 
 open System.IO
 
-let readFile =
-    File.ReadAllLines 
-    >> Array.map int 
-    >> Array.toList
+module Day01 = 
 
-let sum numbers = List.fold (+) numbers
+    let readFile =
+        File.ReadAllLines 
+        >> Array.map int 
+        >> Array.toList
 
-let product numbers = List.fold (*) 1 numbers
+    let sum numbers = List.fold (+) numbers
 
-let sumEquals2020 numbers = List.sum numbers = 2020
+    let product numbers = List.fold (*) 1 numbers
 
-let buildTuples entries =
-    seq {
-        for i in 0 .. List.length (entries) - 1 do
-            for j in 0 .. List.length (entries) - 1 do
-                if i <> j then 
-                    yield [ List.item i entries; List.item j entries]
-    }
+    let sumEquals2020 numbers = List.sum numbers = 2020
 
-let buildTriples entries =
-    seq {
-        for i in 0 .. List.length (entries) - 1 do
-            for j in 0 .. List.length (entries) - 1 do
-                for k in 0 .. List.length (entries) - 1 do
-                    if i <> j && j <> k && i <> k then 
-                        yield [ List.item i entries; List.item j entries; List.item k entries]
-    }
+    let buildTuples entries =
+        seq {
+            for i in 0 .. List.length (entries) - 1 do
+                for j in 0 .. List.length (entries) - 1 do
+                    if i <> j then 
+                        yield [ List.item i entries; List.item j entries]
+        }
 
-let inspect groups =
-    seq {
-        for group in groups do
-            if sumEquals2020 (group) then 
-                yield product (group)
-    }
+    let buildTriples entries =
+        seq {
+            for i in 0 .. List.length (entries) - 1 do
+                for j in 0 .. List.length (entries) - 1 do
+                    for k in 0 .. List.length (entries) - 1 do
+                        if i <> j && j <> k && i <> k then 
+                            yield [ List.item i entries; List.item j entries; List.item k entries]
+        }
 
-[<EntryPoint>]
-let main argv =
-    let numbers = readFile argv.[0]
+    let inspect groups =
+        seq {
+            for group in groups do
+                if sumEquals2020 (group) then 
+                    yield product (group)
+        }
 
-    buildTuples numbers
-    |> inspect
-    |> Seq.head
-    |> printfn "The answer to part 1 is '%d'."
+    [<EntryPoint>]
+    let main argv =
+        let numbers = readFile argv.[0]
 
-    buildTriples numbers
-    |> inspect
-    |> Seq.head
-    |> printfn "The answer to part 2 is '%d'."
+        buildTuples numbers
+        |> inspect
+        |> Seq.head
+        |> printfn "The answer to part 1 is '%d'."
 
-    0
-    
+        buildTriples numbers
+        |> inspect
+        |> Seq.head
+        |> printfn "The answer to part 2 is '%d'."
+
+        0
+        

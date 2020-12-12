@@ -1,69 +1,71 @@
-﻿module AdventOfCode2020.Day02
+﻿namespace AdventOfCode2020
 
 open System.IO
 open System.Text.RegularExpressions
 
-type Line = 
-    { 
-        Min:int
-        Max:int
-        Character:char
-        Password:string
-    }
+module Day02 =
 
-let parseLines lines =
-    let pattern = @"^(\d+)-(\d+)\s+([a-z]):\s+([a-z]+)$"
-    
-    [
-        for line in lines do
-            let m = Regex.Match(line, pattern)
+    type Line = 
+        { 
+            Min:int
+            Max:int
+            Character:char
+            Password:string
+        }
 
-            if m.Success then 
-                yield { 
-                    Min = int(m.Groups.Item(1).Value)
-                    Max = int(m.Groups.Item(2).Value)
-                    Character = m.Groups.Item(3).Value.[0]
-                    Password = m.Groups.Item(4).Value
-                } 
-            else
-                failwithf "Invalid line '%s'" line
-    ]
+    let parseLines lines =
+        let pattern = @"^(\d+)-(\d+)\s+([a-z]):\s+([a-z]+)$"
+        
+        [
+            for line in lines do
+                let m = Regex.Match(line, pattern)
 
-let readFile =
-    File.ReadAllLines 
-    >> parseLines
+                if m.Success then 
+                    yield { 
+                        Min = int(m.Groups.Item(1).Value)
+                        Max = int(m.Groups.Item(2).Value)
+                        Character = m.Groups.Item(3).Value.[0]
+                        Password = m.Groups.Item(4).Value
+                    } 
+                else
+                    failwithf "Invalid line '%s'" line
+        ]
 
-let countInstanceOf x =
-    Seq.toList
-    >> List.filter ((=) x) 
-    >> List.length
+    let readFile =
+        File.ReadAllLines 
+        >> parseLines
 
-let isBetween min max value = min <= value && value <= max
+    let countInstanceOf x =
+        Seq.toList
+        >> List.filter ((=) x) 
+        >> List.length
 
-let charAtIndexIsEqualTo (i, s:string, c) = s.[i - 1] = c
+    let isBetween min max value = min <= value && value <= max
 
-let isValidPart1 line = countInstanceOf line.Character line.Password |> isBetween line.Min line.Max
+    let charAtIndexIsEqualTo (i, s:string, c) = s.[i - 1] = c
 
-let isValidPart2 line = charAtIndexIsEqualTo(line.Min, line.Password, line.Character) <> charAtIndexIsEqualTo(line.Max, line.Password, line.Character)
+    let isValidPart1 line = countInstanceOf line.Character line.Password |> isBetween line.Min line.Max
 
-let validatePasswords lines validator = 
-    [
-        for line in lines do
-            yield validator line
-    ]
+    let isValidPart2 line = charAtIndexIsEqualTo(line.Min, line.Password, line.Character) <> charAtIndexIsEqualTo(line.Max, line.Password, line.Character)
 
-[<EntryPoint>]
-let main argv =
-    let lines = readFile argv.[0]
-    
-    validatePasswords lines isValidPart1
-    |> List.filter ((=) true)
-    |> List.length
-    |> printfn "The answer to part 1 is '%d'."
+    let validatePasswords lines validator = 
+        [
+            for line in lines do
+                yield validator line
+        ]
 
-    validatePasswords lines isValidPart2
-    |> List.filter ((=) true)
-    |> List.length
-    |> printfn "The answer to part 2 is '%d'."
+    [<EntryPoint>]
+    let main argv =
+        let lines = readFile argv.[0]
+        
+        validatePasswords lines isValidPart1
+        |> List.filter ((=) true)
+        |> List.length
+        |> printfn "The answer to part 1 is '%d'."
 
-    0
+        validatePasswords lines isValidPart2
+        |> List.filter ((=) true)
+        |> List.length
+        |> printfn "The answer to part 2 is '%d'."
+
+        0
