@@ -25,6 +25,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day10", "A
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day11", "AdventOfCode2020.Day11\AdventOfCode2020.Day11.fsproj", "{20124A48-4E42-415C-B574-7D4A336523E4}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day12", "AdventOfCode2020.Day12\AdventOfCode2020.Day12.fsproj", "{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -182,5 +184,17 @@ Global
 		{20124A48-4E42-415C-B574-7D4A336523E4}.Release|x64.Build.0 = Release|Any CPU
 		{20124A48-4E42-415C-B574-7D4A336523E4}.Release|x86.ActiveCfg = Release|Any CPU
 		{20124A48-4E42-415C-B574-7D4A336523E4}.Release|x86.Build.0 = Release|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Debug|x64.Build.0 = Debug|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Debug|x86.Build.0 = Debug|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Release|x64.ActiveCfg = Release|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Release|x64.Build.0 = Release|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Release|x86.ActiveCfg = Release|Any CPU
+		{F97B3E8B-C67E-4A56-AD52-5A7FF0016F2F}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
