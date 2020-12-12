@@ -27,71 +27,36 @@ module Day12 =
             Heading:char
         }
 
-        member this.MoveNorth value =
-            {
-                Position = 
-                    { 
-                        X = this.Position.X; 
-                        Y = this.Position.Y + value
-                    }
-                Heading = this.Heading
-            }
+        member this.MoveNorth value = { this with Position = { this.Position with Y = this.Position.Y + value } }
 
-        member this.MoveEast value =
-            {
-                Position =
-                    {
-                        X = this.Position.X + value
-                        Y = this.Position.Y
-                    }
-                Heading = this.Heading
-            }
+        member this.MoveEast value = { this with Position = { this.Position with X = this.Position.X + value } }
 
-        member this.MoveSouth value =
-            {
-                Position = 
-                    {
-                        X = this.Position.X
-                        Y = this.Position.Y - value
-                    }
-                Heading = this.Heading
-            }
+        member this.MoveSouth value = { this with Position = { this.Position with Y = this.Position.Y - value } }
 
-        member this.MoveWest value =
-            {
-                Position =
-                    {
-                        X = this.Position.X - value
-                        Y = this.Position.Y
-                    }
-                Heading = this.Heading
-            }
+        member this.MoveWest value = { this with Position = { this.Position with X = this.Position.X - value } }
+
 
         member this.Turn value =
             let currentIndex = List.findIndex (fun d -> d = this.Heading) directions
             let newIndex = (directions.Length + currentIndex + (value / 90)) % directions.Length
             
-            {
-                Position = this.Position 
-                Heading = directions.[newIndex]
-            }
+            { this with  Heading = directions.[newIndex] }
 
         member this.MoveForward value =
-            {
-                Position =
-                    {
-                        X = match this.Heading with
-                            | 'E' -> this.Position.X + value
-                            | 'W' -> this.Position.X - value
-                            | _ -> this.Position.X
-              
-                        Y = match this.Heading with
-                            | 'N' -> this.Position.Y + value
-                            | 'S' -> this.Position.Y - value
-                            | _ -> this.Position.Y
-                    }
-                Heading = this.Heading
-            }
+            let newPosition =
+                {
+                    X = match this.Heading with
+                        | 'E' -> this.Position.X + value
+                        | 'W' -> this.Position.X - value
+                        | _ -> this.Position.X
+          
+                    Y = match this.Heading with
+                        | 'N' -> this.Position.Y + value
+                        | 'S' -> this.Position.Y - value
+                        | _ -> this.Position.Y
+                }
+
+            { this with Position = newPosition }
 
         member this.FollowInstruction instruction =
             match instruction.Operation with
@@ -118,45 +83,13 @@ module Day12 =
             WayPoint:Point
         }
 
-        member this.MoveNorth value =
-            {
-                Position = this.Position
-                WayPoint = 
-                    { 
-                        X = this.WayPoint.X; 
-                        Y = this.WayPoint.Y + value
-                    }
-            }
+        member this.MoveNorth value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y + value } }
 
-        member this.MoveEast value =
-            {
-                Position = this.Position
-                WayPoint = 
-                    {
-                        X = this.WayPoint.X + value
-                        Y = this.WayPoint.Y
-                    }
-            }
+        member this.MoveEast value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y } }
 
-        member this.MoveSouth value =
-            {
-                Position = this.Position
-                WayPoint = 
-                    {
-                        X = this.WayPoint.X
-                        Y = this.WayPoint.Y - value
-                    }
-            }
+        member this.MoveSouth value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y - value } }
 
-        member this.MoveWest value =
-            {
-                Position = this.Position
-                WayPoint = 
-                    {
-                        X = this.WayPoint.X - value
-                        Y = this.WayPoint.Y
-                    }
-            }
+        member this.MoveWest value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y } }
 
         member this.Turn value =
             let rotations = abs value / 90
@@ -173,20 +106,16 @@ module Day12 =
                             Y = waypoint.X * -1 * direction
                         }
 
+                { this with WayPoint = waypoint }
+
+        member this.MoveForward value = 
+            let newPosition = 
                 {
-                    Position = this.Position
-                    WayPoint = waypoint
+                    X = this.Position.X + (value * this.WayPoint.X)
+                    Y = this.Position.Y + (value * this.WayPoint.Y)
                 }
 
-        member this.MoveForward value =
-            {
-                Position = 
-                    {
-                        X = this.Position.X + (value * this.WayPoint.X)
-                        Y = this.Position.Y + (value * this.WayPoint.Y)
-                    }
-                WayPoint = this.WayPoint
-            }
+            { this with Position = newPosition }
 
         member this.FollowInstruction instruction =
             match instruction.Operation with
@@ -208,21 +137,11 @@ module Day12 =
             currentState
 
 
-    let parseInstruction (text:string) =
-        {
-            Operation = text.[0]
-            Value = int text.[1..]
-        }
+    let parseInstruction (text:string) = { Operation = text.[0]; Value = int text.[1..] }
     
-    let parseInstructions lines =
-        [
-            for line in lines do
-                yield parseInstruction line
-        ]
+    let parseInstructions lines = [ for line in lines do yield parseInstruction line ]
 
-    let readFile =
-        File.ReadAllLines
-        >> parseInstructions
+    let readFile = File.ReadAllLines >> parseInstructions
 
     [<EntryPoint>]
     let main argv =
