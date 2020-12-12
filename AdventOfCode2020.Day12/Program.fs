@@ -40,7 +40,7 @@ module Day12 =
             let currentIndex = List.findIndex (fun d -> d = this.Heading) directions
             let newIndex = (directions.Length + currentIndex + (value / 90)) % directions.Length
             
-            { this with  Heading = directions.[newIndex] }
+            { this with Heading = directions.[newIndex] }
 
         member this.MoveForward value =
             let newPosition =
@@ -147,34 +147,12 @@ module Day12 =
     let main argv =
         let instructions = readFile argv.[0]
 
-        let start1 = 
-            { 
-                Position =
-                    {
-                        X = 0
-                        Y = 0
-                    }
-                Heading = 'E'
-            }
-
+        let start1 = { Position = { X = 0; Y = 0 }; Heading = 'E' }
         let finish1 = start1.FollowInstructions instructions
         start1.Position.ManhattanDistance finish1.Position
         |> printfn "The answer to part 1 is '%d'."
 
-        let start2 = 
-            { 
-                Position =
-                    {
-                        X = 0
-                        Y = 0
-                    }
-                WayPoint =
-                    {
-                        X = 10
-                        Y = 1
-                    }
-            }
-
+        let start2 = { Position = { X = 0; Y = 0 }; WayPoint = { X = 10; Y = 1 } }
         let finish2 = start2.FollowInstructions instructions
         start2.Position.ManhattanDistance finish2.Position
         |> printfn "The answer to part 2 is '%d'."
