@@ -19,6 +19,8 @@ module Day12 =
             Y:int
         }
 
+        member this.ManhattanDistance point = (abs (point.X - this.X)) + (abs (point.Y - this.Y))
+
     type Ferry1 =
         {
             Position:Point
@@ -78,8 +80,15 @@ module Day12 =
             {
                 Position =
                     {
-                        X = if this.Heading = 'E' then this.Position.X + value else if this.Heading = 'W' then this.Position.X - value else this.Position.X
-                        Y = if this.Heading = 'S' then this.Position.Y - value else if this.Heading = 'N' then this.Position.Y + value else this.Position.Y
+                        X = match this.Heading with
+                            | 'E' -> this.Position.X + value
+                            | 'W' -> this.Position.X - value
+                            | _ -> this.Position.X
+              
+                        Y = match this.Heading with
+                            | 'N' -> this.Position.Y + value
+                            | 'S' -> this.Position.Y - value
+                            | _ -> this.Position.Y
                     }
                 Heading = this.Heading
             }
@@ -93,7 +102,7 @@ module Day12 =
             | 'L' -> this.Turn -instruction.Value
             | 'R' -> this.Turn instruction.Value
             | 'F' -> this.MoveForward instruction.Value
-            | _ -> failwithf "Invalid instruction '%A'" instruction
+            | _ -> failwithf "Invalid operation '%c'." instruction.Operation
 
         member this.FollowInstructions instructions =
             let mutable currentState = this
@@ -157,7 +166,7 @@ module Day12 =
             if direction = 0 then
                 this
             else
-                for r in 0 .. rotations - 1 do
+                for _ in 0 .. rotations - 1 do
                     waypoint <- 
                         {
                             X = waypoint.Y * direction
@@ -188,7 +197,7 @@ module Day12 =
             | 'L' -> this.Turn -instruction.Value
             | 'R' -> this.Turn instruction.Value
             | 'F' -> this.MoveForward instruction.Value
-            | _ -> failwithf "Invalid instruction '%A'" instruction
+            | _ -> failwithf "Invalid operation '%c'." instruction.Operation
 
         member this.FollowInstructions instructions =
             let mutable currentState = this
@@ -215,8 +224,6 @@ module Day12 =
         File.ReadAllLines
         >> parseInstructions
 
-    let manhattanDistance start finish = (abs (finish.X - start.X)) + (abs (finish.Y - start.Y))
-
     [<EntryPoint>]
     let main argv =
         let instructions = readFile argv.[0]
@@ -232,7 +239,7 @@ module Day12 =
             }
 
         let finish1 = start1.FollowInstructions instructions
-        manhattanDistance start1.Position finish1.Position
+        start1.Position.ManhattanDistance finish1.Position
         |> printfn "The answer to part 1 is '%d'."
 
         let start2 = 
@@ -250,7 +257,7 @@ module Day12 =
             }
 
         let finish2 = start2.FollowInstructions instructions
-        manhattanDistance start2.Position finish2.Position
+        start2.Position.ManhattanDistance finish2.Position
         |> printfn "The answer to part 2 is '%d'."
 
         0
