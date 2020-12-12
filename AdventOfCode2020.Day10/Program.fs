@@ -1,34 +1,10 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode2020.Day10
 
-open System
 open System.IO
-open System.Collections.Generic
-open System.Linq
+open AdventOfCode2020.Day10.Joltable
+open AdventOfCode2020.Day10.Cache
 
-module Day10 = 
-
-    type Joltable =
-        | Outlet
-        | Adapter of Output:int
-        | Device of MaxInput:int
-
-        member this.Output =
-            match this with
-            | Outlet _ -> 0
-            | Adapter output -> output
-            | Device maxInput -> maxInput
-
-        member this.MinInput =
-            match this with
-            | Outlet _ -> 0
-            | Adapter output -> output - 3
-            | Device maxInput -> maxInput - 3
-         
-        member this.MaxInput =
-            match this with
-            | Outlet _ -> 0
-            | Adapter output -> output - 1
-            | Device maxInput -> maxInput 
+module Program = 
 
     let parseAdapter text = 
         let value = int text
@@ -60,16 +36,6 @@ module Day10 =
     let useAllAdapters = List.sortBy (fun (joltable:Joltable) -> joltable.Output)
 
     let isBetween min max value = min <= value && value <= max
-
-    let cache = new Dictionary<Joltable, uint64>()
-
-    let checkCache source = 
-        if cache.Keys.Contains(source) then
-            (true, cache.[source])
-        else
-            (false, 0UL)
-
-    let addToCache source count = cache.[source] <- count
 
     let rec countValidAdapterChains (source:Joltable) choices = 
         let cacheEntry = checkCache source

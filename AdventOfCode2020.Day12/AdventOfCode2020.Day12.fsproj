@@ -1,12 +1,12 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
-
+<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <OutputType>Exe</OutputType>
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
-
   <ItemGroup>
+    <Compile Include="Point.fs" />
+    <Compile Include="Instruction.fs" />
+    <Compile Include="Ferry.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
-
 </Project>

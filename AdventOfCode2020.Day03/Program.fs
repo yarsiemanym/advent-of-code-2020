@@ -1,8 +1,8 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode2020.Day03
 
 open System.IO
 
-module Day03 =
+module Program =
 
     type Point = { 
         X: int

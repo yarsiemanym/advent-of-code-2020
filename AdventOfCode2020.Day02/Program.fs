@@ -1,9 +1,9 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode2020.Day02
 
 open System.IO
 open System.Text.RegularExpressions
 
-module Day02 =
+module Program =
 
     type Line = 
         { 

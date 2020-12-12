@@ -1,10 +1,10 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode2020.Day06
 
 open System
 open System.IO
 open System.Text.RegularExpressions
 
-module Day06 =
+module Program =
 
     let processPassenger = Set.ofSeq
 

@@ -1,8 +1,8 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode2020.Day01
 
 open System.IO
 
-module Day01 = 
+module Program = 
 
     let readFile =
         File.ReadAllLines 

@@ -1,9 +1,8 @@
-﻿namespace AdventOfCode2020
+﻿namespace AdventOfCode2020.Day05
 
-open System
 open System.IO
 
-module Day05 = 
+module Program = 
 
     let partition min max = ((max - min) / 2) + min
 
