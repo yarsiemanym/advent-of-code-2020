@@ -11,19 +11,17 @@ module Program =
 
     let calcPart1Answer myArrivalTime (bus:Bus, nextDepartureTime) = bus.Id * (nextDepartureTime - myArrivalTime)
 
-    let calcPart2AnswerSlow (buses:list<Bus>) = 
-        let activeBuses = List.filter (fun (bus:Bus) -> bus.InService) buses
-        let anchorBus = List.head activeBuses
-        let mutable globalSyncTime = 0UL
-        let mutable continueLoop = true
+    let calcPart2Answer (buses:list<Bus>) =
+        let mutable time = 0UL
+        let mutable increment = 1UL
+        
+        for bus in buses do
+            while (time + bus.Index) % bus.Id <> 0UL do
+                time <- time + increment
 
-        while continueLoop do
-            let syncTimes = [ for bus in activeBuses.Tail do anchorBus.NextSyncTime bus globalSyncTime ]
-            let count = List.distinct syncTimes |> List.length
-            globalSyncTime <- List.max syncTimes
-            continueLoop <- count <> 1
+            increment <- increment * bus.Id
 
-        globalSyncTime
+        time
 
     [<EntryPoint>]
     let main argv =
@@ -40,7 +38,7 @@ module Program =
 
         buses
         |> List.filter (fun b -> b.InService)
-        |> calcPart2AnswerSlow
+        |> calcPart2Answer
         |> printfn "The answer to part 2 is '%d'."
 
         0
