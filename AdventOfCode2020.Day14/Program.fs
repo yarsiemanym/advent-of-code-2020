@@ -4,7 +4,7 @@ open System
 open System.Collections.Generic
 open System.IO
 open System.Text.RegularExpressions
-open AdventOfCode2020.Day14.Bitmask
+open AdventOfCode2020.Day14.Instruction
 
 module Program = 
 

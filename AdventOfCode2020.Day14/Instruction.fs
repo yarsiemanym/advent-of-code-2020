@@ -1,6 +1,6 @@
 namespace AdventOfCode2020.Day14
 
-module Bitmask =
+module Instruction =
 
     type Instruction =
         | SetMask of Value:list<char>
