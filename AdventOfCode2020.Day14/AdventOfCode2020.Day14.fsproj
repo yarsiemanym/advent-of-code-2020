@@ -5,6 +5,7 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Instruction.fs" />
+    <Compile Include="SeaPort.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>

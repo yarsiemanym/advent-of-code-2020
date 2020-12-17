@@ -20,7 +20,7 @@ module Program =
             SetMask(Value = Seq.toList m.Groups.[1].Value)
         else if Regex.IsMatch(line, writePattern) then
             let m = Regex.Match(line, writePattern)
-            WriteToMem(Address = int m.Groups.[1].Value, Value = uint64 m.Groups.[2].Value)
+            WriteToMem(Address = uint64 m.Groups.[1].Value, Value = uint64 m.Groups.[2].Value)
         else
             failwithf "Invalid instruction '%s'." line
 
@@ -34,40 +34,30 @@ module Program =
         File.ReadAllLines
         >> parseInstructions 
 
-    let mutable mask:list<char> = List.Empty
-
-    let memory = new Dictionary<int,uint64>()
-
-    let applyMask input =
-        let mutable output = input
-
-        for i in 0 .. mask.Length - 1 do
-            match mask.[i] with
-            | '1' -> output <- output ||| (1UL <<< (mask.Length - 1 - i))
-            | '0' -> output <- output &&& ~~~ (1UL <<< (mask.Length - 1 - i))
-            | _ -> ()
-
-        output
-
-    let writeValue address value = 
-        memory.Remove(address) |> ignore
-        memory.Add(address, value)
-
-    let execute instructions = 
-        for instruction in instructions do
-            match instruction with
-            | SetMask(value) -> mask <- value
-            | WriteToMem(address, value) -> applyMask value |> writeValue address
-
-    let calcPart1Answer = Seq.sum
-
     [<EntryPoint>]
     let main argv =
         let instructions = readFile argv.[0]
-        
-        execute instructions
 
-        calcPart1Answer memory.Values
+        let decoderChipV1 = 
+            {
+                SeaPortV1.DecoderChip.Memory = new Dictionary<uint64, uint64>()
+                SeaPortV1.DecoderChip.Mask = List.Empty
+            }
+
+        decoderChipV1.Execute instructions
+
+        Seq.sum decoderChipV1.Memory.Values
         |> printfn "The answer to part 1 is '%d'."
+
+        let decoderChipV2 = 
+            {
+                SeaPortV2.DecoderChip.Memory = new Dictionary<uint64, uint64>()
+                SeaPortV2.DecoderChip.Mask = List.Empty
+            }
+
+        decoderChipV2.Execute instructions
+
+        Seq.sum decoderChipV2.Memory.Values
+        |> printfn "The answer to part 2 is '%d'."
 
         0

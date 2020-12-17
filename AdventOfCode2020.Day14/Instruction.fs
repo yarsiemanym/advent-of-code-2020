@@ -4,4 +4,4 @@ module Instruction =
 
     type Instruction =
         | SetMask of Value:list<char>
-        | WriteToMem of Address:int * Value:uint64
+        | WriteToMem of Address:uint64 * Value:uint64
