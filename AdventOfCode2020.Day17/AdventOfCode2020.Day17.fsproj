@@ -4,7 +4,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
   <ItemGroup>
-    <Compile Include="PocketDimension.fs" />
+    <Compile Include="PocketUniverse.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
