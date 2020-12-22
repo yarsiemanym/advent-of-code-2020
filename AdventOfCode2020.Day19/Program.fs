@@ -3,7 +3,6 @@
 open System
 open System.IO
 open System.Text.RegularExpressions
-open AdventOfCode2020.Day19.Cache
 open AdventOfCode2020.Day19.Rules
 
 module Program = 
@@ -24,26 +23,15 @@ module Program =
             Messages = Array.toList (sections.[1].Split('\n'))
         }
 
-    let getValidCombinations rule rules =
-        let cacheEntry = checkCache rule
-
-        if fst cacheEntry then
-            snd cacheEntry
-        else
-            let validCombinations = rule.ValidCominations rules
-            addToCache rule validCombinations
-            validCombinations
-
-    let calcPart1Answer input = 
-        List.filter (fun message -> Seq.exists ((=) message) (getValidCombinations input.Rules.[0] input.Rules)) input.Messages
-        |> List.length
-
+    let findValidMessages input = 
+        List.filter (fun message -> message = validate input.Rules 0 message) input.Messages
 
     [<EntryPoint>]
     let main argv =
         File.ReadAllText argv.[0]
         |> parseInput
-        |> calcPart1Answer
-        |> printfn "The answer to part 1 is '%d'."
+        |> findValidMessages
+        |> List.length
+        |> printfn "The answer is '%d'."
         
         0

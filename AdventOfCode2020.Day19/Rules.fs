@@ -13,26 +13,34 @@ module Rules =
             | SimpleRule(id, _) -> id
             | CompositeRule(id, _) -> id
 
-        member this.ValidCominations (rules:Map<int, Rule>) = 
-            [
-                match this with
-                | SimpleRule(_, character) -> yield sprintf "%c" character
-                | CompositeRule(_, subrules) -> 
-                    yield! 
-                        List.fold (fun agg subrule ->
-                            agg @ List.fold (fun roots ruleId -> 
-                                let rule = rules.[ruleId]
-                                let combos = rule.ValidCominations rules
-                                
-                                [
-                                    for combo in combos do
-                                        for root in roots do
-                                            yield sprintf "%s%s" root combo
-                                ]
-                            ) [""] subrule
-                        ) [] subrules
-            ]
+    let rec validate (rules:Map<int, Rule>) ruleId (message:string) =
+        match rules.[ruleId] with
+        | SimpleRule(_, character) -> 
+            if Seq.head message = character then 
+                sprintf "%c" character 
+            else 
+                ""
+        | CompositeRule(_, subrules) ->
+            List.map (fun (subrule:list<int>) -> 
+                let mutable isValid = true
+                let mutable i = 0
+                let mutable validatedPortion = ""
+                
+                while isValid && i < subrule.Length do
+                    let ruleId = subrule.[i]
+                    let unvalidatePortion = message.[validatedPortion.Length .. message.Length - 1]
+                    if unvalidatePortion <> "" then
+                        let validateResult = validate rules ruleId unvalidatePortion
+                        isValid <- validateResult <> ""
+                        validatedPortion <- sprintf "%s%s" validatedPortion validateResult
+                    i <- i + 1
 
+                if isValid then validatedPortion else ""
+            ) subrules
+            |> List.filter ((<>) "")
+            |> List.tryHead
+            |> (fun option -> if option.IsSome then option.Value else "")
+            
     let parseSubrule text =
         let subrulePattern = @"^((\d+) ?)+|$"
         let m = Regex.Match(text, subrulePattern)

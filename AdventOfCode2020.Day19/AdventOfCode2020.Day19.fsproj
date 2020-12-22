@@ -5,7 +5,6 @@
   </PropertyGroup>
   <ItemGroup>
     <Compile Include="Rules.fs" />
-    <Compile Include="Cache.fs" />
     <Compile Include="Program.fs" />
   </ItemGroup>
 </Project>
