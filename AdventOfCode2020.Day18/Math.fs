@@ -16,6 +16,8 @@ module MathV1 =
                 | '+' -> operand1.Evaluate + operand2.Evaluate
                 | '*' -> operand1.Evaluate * operand2.Evaluate
                 | _ -> failwithf "Invalid operator '%c'." operator
+    
+    let combine operand1 operator operand2 = Operation(operand1, operator, operand2)
 
     let rec parseExpression (text:string) = 
         if Regex.IsMatch(text, @"^\d+$") then
@@ -59,7 +61,7 @@ module MathV1 =
 
                     match token with
                     | "+" | "*" -> operator <- token.[0]
-                    | _ -> expression <- Operation(expression, operator, parseExpression token)
+                    | _ -> expression <- combine expression operator (parseExpression token)
 
                     tokenStart <- -1
                     tokenLength <- 0
@@ -87,6 +89,16 @@ module MathV2 =
                 | '*' -> operand1.Evaluate * operand2.Evaluate
                 | _ -> failwithf "Invalid operator '%c'." operator
 
+    let combine operand1 operator operand2 = 
+        match operator with
+        | '+' -> 
+            match operand1 with
+            | Literal(_) -> Operation(operand1, operator, operand2)
+            | Operation(left, op, right) -> Operation(left, op, Operation(right, operator, operand2))
+
+        | '*' -> Operation(operand1, operator, operand2)
+        | _ -> failwithf "Invalid operator '%c'." operator
+
     let rec parseExpression (text:string) = 
         if Regex.IsMatch(text, @"^\d+$") then
             Literal(int64 text)
@@ -129,7 +141,7 @@ module MathV2 =
 
                     match token with
                     | "+" | "*" -> operator <- token.[0]
-                    | _ -> expression <- Operation(expression, operator, parseExpression token)
+                    | _ -> expression <- combine expression operator (parseExpression token)
 
                     tokenStart <- -1
                     tokenLength <- 0
