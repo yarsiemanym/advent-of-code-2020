@@ -39,6 +39,8 @@ Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day17", "A
 EndProject
 Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day18", "AdventOfCode2020.Day18\AdventOfCode2020.Day18.fsproj", "{17194E54-0F5B-4318-9992-32C6D26994D1}"
 EndProject
+Project("{F2A71F9B-5D33-465A-A702-920D77279786}") = "AdventOfCode2020.Day19", "AdventOfCode2020.Day19\AdventOfCode2020.Day19.fsproj", "{91A52DC8-F922-46A2-A9C1-3643E132E30B}"
+EndProject
 Global
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
@@ -280,5 +282,17 @@ Global
 		{17194E54-0F5B-4318-9992-32C6D26994D1}.Release|x64.Build.0 = Release|Any CPU
 		{17194E54-0F5B-4318-9992-32C6D26994D1}.Release|x86.ActiveCfg = Release|Any CPU
 		{17194E54-0F5B-4318-9992-32C6D26994D1}.Release|x86.Build.0 = Release|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Debug|x64.ActiveCfg = Debug|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Debug|x64.Build.0 = Debug|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Debug|x86.ActiveCfg = Debug|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Debug|x86.Build.0 = Debug|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Release|Any CPU.Build.0 = Release|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Release|x64.ActiveCfg = Release|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Release|x64.Build.0 = Release|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Release|x86.ActiveCfg = Release|Any CPU
+		{91A52DC8-F922-46A2-A9C1-3643E132E30B}.Release|x86.Build.0 = Release|Any CPU
 	EndGlobalSection
 EndGlobal
