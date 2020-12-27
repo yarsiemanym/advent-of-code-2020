@@ -16,30 +16,42 @@ module Rules =
     let rec validate (rules:Map<int, Rule>) ruleId (message:string) =
         match rules.[ruleId] with
         | SimpleRule(_, character) -> 
-            if Seq.head message = character then 
-                sprintf "%c" character 
+            if message.[0] = character then 
+                [ sprintf "%c" character ]
             else 
-                ""
+                List.Empty
         | CompositeRule(_, subrules) ->
-            List.map (fun (subrule:list<int>) -> 
-                let mutable isValid = true
-                let mutable i = 0
-                let mutable validatedPortion = ""
-                
-                while isValid && i < subrule.Length do
-                    let ruleId = subrule.[i]
-                    let unvalidatePortion = message.[validatedPortion.Length .. message.Length - 1]
-                    if unvalidatePortion <> "" then
-                        let validateResult = validate rules ruleId unvalidatePortion
-                        isValid <- validateResult <> ""
-                        validatedPortion <- sprintf "%s%s" validatedPortion validateResult
-                    i <- i + 1
+            [
+                for subrule in subrules do
+                    let mutable validatedPortions = [ "" ]
+                    let mutable isValid = true
+                    let mutable i = 0
 
-                if isValid then validatedPortion else ""
-            ) subrules
-            |> List.filter ((<>) "")
-            |> List.tryHead
-            |> (fun option -> if option.IsSome then option.Value else "")
+                    while isValid && i < subrule.Length do
+                        let ruleId = subrule.[i]
+
+                        validatedPortions <- 
+                            [
+
+                                for validatedPortion in validatedPortions do
+                                    let unvalidatedPortion = message.[validatedPortion.Length .. message.Length - 1]
+
+                                    if unvalidatedPortion = "" then
+                                        isValid <- false
+                                    else
+                                        let results = validate rules ruleId unvalidatedPortion
+
+                                        if List.isEmpty results then
+                                            isValid <- false
+                                        else
+                                            for result in results do
+                                                yield sprintf "%s%s" validatedPortion result        
+                            ]
+
+                        i <- i + 1
+                    
+                    yield! validatedPortions
+            ]
             
     let parseSubrule text =
         let subrulePattern = @"^((\d+) ?)+|$"

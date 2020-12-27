@@ -24,7 +24,10 @@ module Program =
         }
 
     let findValidMessages input = 
-        List.filter (fun message -> message = validate input.Rules 0 message) input.Messages
+        List.filter (fun message -> 
+            let results = validate input.Rules 0 message
+            List.exists ((=) message) results
+        ) input.Messages
 
     [<EntryPoint>]
     let main argv =
