@@ -71,11 +71,11 @@ module Ferry =
 
         member this.MoveNorth value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y + value } }
 
-        member this.MoveEast value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y } }
+        member this.MoveEast value = { this with WayPoint = { this.WayPoint with X = this.WayPoint.X + value } }
 
         member this.MoveSouth value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y - value } }
 
-        member this.MoveWest value = { this with WayPoint = { this.WayPoint with Y = this.WayPoint.Y } }
+        member this.MoveWest value = { this with WayPoint = { this.WayPoint with X = this.WayPoint.X - value } }
 
         member this.Turn value =
             let rotations = abs value / 90
